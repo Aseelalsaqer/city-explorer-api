@@ -1,44 +1,39 @@
-'use strict'
-const express = require ('express');
+"use strict";
+const express = require("express");
 const server = express();
-const weatherData = require ('./data/weather.json')
+const weatherData = require("./data/weather.json");
 const PORT = 3010;
 
+// http://localhost:3010/weather
+server.get("/weather", (req, res) => {
+  const lat = req.query.lat;
+  const lon = req.query.lon;
+  console.log(`req: lat=${lat}, lon=${lon}`);
 
-// http://localhost:3010/weather?cityName=Seattle
-server.get('/weather',(req,res)=>{
-    const cityName = req.query.cityName;
-const lat = req.query.lat;
-const lon = req.query.lon;
-let theWeather = weatherData.find((item) =>{
-    if( item.city_name === cityName && item.lat === lat && item.lon === lon ){
-    return item;
+  let theWeather = weatherData.find((item) => {
+    if (item.lat === lat && item.lon === lon) {
+      return true;
     }
-    else{
-        return 'nothing-found';
-    }
-});
-let resultArr = [];
-if (theWeather != 'nothing-found'){
-    theWeather.data.forEach(item => {
-        resultArr.push(
-            {
-                description: `Low of ${item.low_temp}, high of ${item.max_temp} with ${item.weather.description}`, data: `${item.datetime}`}
-        )
-        console.log(resultArr);
-        
+  });
+
+  if (theWeather) {
+    let resultArr = [];
+    theWeather.data.forEach((item) => {
+      resultArr.push({
+        description: `Low of ${item.low_temp}, high of ${item.max_temp} with ${item.weather.description}`,
+        date: `${item.datetime}`,
+      });
+      console.log(resultArr);
     });
     
+    res.set('Access-Control-Allow-Origin', '*');
     res.send(resultArr);
-}
-
+  }
 });
 
-
-server.get('*',(req,res) =>{
-    res.status(500).send('Somthing Went Wrong')
-})
-server.listen(PORT,() =>{
-    console.log(`I am listening on ${PORT}`)
-})
-
+server.get("*", (req, res) => {
+  res.status(500).send("Somthing Went Wrong");
+});
+server.listen(PORT, () => {
+  console.log(`I am listening on ${PORT}`);
+});
