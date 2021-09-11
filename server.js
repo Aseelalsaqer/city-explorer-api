@@ -1,10 +1,11 @@
 "use strict";
+require(dotenv).config();
 const express = require("express");
 const server = express();
 const weatherData = require("./data/weather.json");
-const PORT = 3010;
+const PORT =process.env.PORT;
 
-// http://localhost:3010/weather
+// http://localhost:.3010/weather
 server.get("/weather", (req, res) => {
   const lat = req.query.lat;
   const lon = req.query.lon;
