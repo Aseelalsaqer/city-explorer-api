@@ -15,18 +15,17 @@ server.get("/weather", async (req, res) => {
   const lon = req.query.lon;
   const key = process.env.WEATHER_API_KEY;
   let finalResult = [];
-  try {
+//   try {
     let result = await axios.get(
       `https://api.weatherbit.io/v2.0/forecast/daily?city=${cityName}&lat=${lat}&lon=${lon}&key=${key}`
     );
     finalResult = result.data.data.map((item) => {
       return new Forecast(item);
     });
-
     res.status(200).send(finalResult);
-  } catch {
-    console.log("error");
-  }
+//   } catch {
+//     console.log("error");
+//   }
 });
 function Forecast(el) {
   this.description = `Low of ${el.low_temp}, high of ${el.high_temp} with ${el.weather.description}`;
@@ -38,6 +37,7 @@ server.get("/movies", async (req, res) => {
   const movieName = req.query.query;
   let moviesArr = [];
   let moviesURL = `https://api.themoviedb.org/3/search/movie?api_key=${key}&query=${movieName}`;
+  console.log(moviesURL);
   try {
     let movieResult = await axios.get(moviesURL);
     moviesArr = movieResult.data.results.map((item) => {
@@ -45,7 +45,7 @@ server.get("/movies", async (req, res) => {
     });
     res.status(200).send(moviesArr);
   } catch {
-    console.log('Err');
+    console.log("Err");
   }
 });
 function Movies(elemnt) {
@@ -63,7 +63,3 @@ server.get("*", (req, res) => {
 server.listen(PORT, () => {
   console.log(`I am listening on ${PORT}`);
 });
-
-
-
-
