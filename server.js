@@ -1,11 +1,11 @@
 "use strict";
-require(dotenv).config();
+require('dotenv').config();
 const express = require("express");
 const server = express();
 const weatherData = require("./data/weather.json");
 const PORT =process.env.PORT;
 
-// http://localhost:.3010/weather
+// http://localhost:3020/weather
 server.get("/weather", (req, res) => {
   const lat = req.query.lat;
   const lon = req.query.lon;
@@ -35,6 +35,7 @@ server.get("/weather", (req, res) => {
 server.get("*", (req, res) => {
   res.status(500).send("Somthing Went Wrong");
 });
+
 server.listen(PORT, () => {
   console.log(`I am listening on ${PORT}`);
 });
