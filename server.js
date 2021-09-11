@@ -28,7 +28,7 @@ server.get("/weather", (req, res) => {
     });
     
     res.set('Access-Control-Allow-Origin', '*');
-    res.send(resultArr);
+    res.status(200).send(resultArr);
   }
 });
 
