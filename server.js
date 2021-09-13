@@ -15,22 +15,24 @@ server.get("/weather", async (req, res) => {
   const lon = req.query.lon;
   const key = process.env.WEATHER_API_KEY;
   let finalResult = [];
-//   try {
+  try {
     let result = await axios.get(
-      `https://api.weatherbit.io/v2.0/forecast/daily?city=${cityName}&lat=${lat}&lon=${lon}&key=${key}`
+      `https://api.weatherbit.io/v2.0/forecast/daily?lat=${lat}&lon=${lon}&key=${key}`
     );
     finalResult = result.data.data.map((item) => {
       return new Forecast(item);
     });
     res.status(200).send(finalResult);
-//   } catch {
-//     console.log("error");
-//   }
+  } catch (e) {
+    console.log(`"weather" error: ${e}`);
+  }
 });
+
 function Forecast(el) {
   this.description = `Low of ${el.low_temp}, high of ${el.high_temp} with ${el.weather.description}`;
   this.date = `${el.valid_date}`;
 }
+
 // http://localhost:3300/movies?query=Amman
 server.get("/movies", async (req, res) => {
   const key = process.env.MOVIES_API_KEY;
@@ -43,11 +45,14 @@ server.get("/movies", async (req, res) => {
     moviesArr = movieResult.data.results.map((item) => {
       return new Movies(item);
     });
+    if(moviesArr.length >20)
+      moviesArr = moviesArr.slice(0,20);
     res.status(200).send(moviesArr);
-  } catch {
-    console.log("Err");
+  } catch (e) {
+    console.log(`"movies" error: ${e}`);
   }
 });
+
 function Movies(elemnt) {
   this.title = elemnt.title;
   this.overview = elemnt.overview;
@@ -55,7 +60,7 @@ function Movies(elemnt) {
   this.totalVotes = elemnt.vote_count;
   this.imageUrl = `https://image.tmdb.org/t/p/w500${elemnt.poster_path}`;
   this.popularity = elemnt.popularity;
-  this.poster = elemnt.release_date;
+  this.released_on = elemnt.release_date;
 }
 server.get("*", (req, res) => {
   res.status(500).send("Somthing Went Wrong");
