@@ -1,20 +1,25 @@
 const axios = require("axios");
-
+let myMemory = {};
 let moviesFunction = async function (req, res) {
-  const key = process.env.MOVIES_API_KEY;
   const movieName = req.query.query;
-  let moviesArr = [];
-  let moviesURL = `https://api.themoviedb.org/3/search/movie?api_key=${key}&query=${movieName}`;
-  console.log(moviesURL);
+  if (myMemory[movieName] !== undefined) {
+    res.send(myMemory[movieName]);
+  } else {
+    const key = process.env.MOVIES_API_KEY;
 
-  let movieResult = await axios.get(moviesURL);
-  moviesArr = movieResult.data.results.map((item) => {
-    return new Movies(item);
-  });
-  if (moviesArr.length > 20) moviesArr = moviesArr.slice(0, 20);
-  res.status(200).send(moviesArr);
+    let moviesArr = [];
+    let moviesURL = `https://api.themoviedb.org/3/search/movie?api_key=${key}&query=${movieName}`;
+    console.log(moviesURL);
+
+    let movieResult = await axios.get(moviesURL);
+    moviesArr = movieResult.data.results.map((item) => {
+      return new Movies(item);
+    });
+    myMemory[movieName]=moviesArr;
+    if (moviesArr.length > 20) moviesArr = moviesArr.slice(0, 20);
+    res.status(200).send(moviesArr);
+  }
 };
-
 function Movies(elemnt) {
   this.title = elemnt.title;
   this.overview = elemnt.overview;
